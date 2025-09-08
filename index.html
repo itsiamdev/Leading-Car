@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cars Image</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preload" as="image" href="images/Ferrari.jpg">
+    <link rel="preload" as="image" href="images/Lamborghini.jpg">
+    <link rel="preload" as="image" href="images/Porsche.jpg">
+    <link rel="preload" as="image" href="images/Mclaren.jpg">
+    <link rel="preload" as="image" href="images/FordMustang.jpg">
+    <link rel="preload" as="image" href="images/Audi.jpg">
+    <link rel="icon" href="images/icon.png">
+</head>
+<body>
+    <div class="slider" aria-label="Car image slider">
+        <div class="slides">
+            <img src="images/Ferrari.jpg" alt="Ferrari" class="slide-image">
+            <img src="images/Lamborghini.jpg" alt="Lamborghini" class="slide-image">
+            <img src="images/Porsche.jpg" alt="Porsche" class="slide-image">
+            <img src="images/Mclaren.jpg" alt="McLaren" class="slide-image">
+            <img src="images/FordMustang.jpg" alt="Ford Mustang" class="slide-image">
+            <img src="images/Audi.jpg" alt="Audi" class="slide-image">
+        </div>
+        <button class="control prev" aria-label="Previous slide">&#10094;</button>
+        <button class="control next" aria-label="Next slide">&#10095;</button>
+        <div class="dots" role="tablist" aria-label="Slide dots"></div>
+    </div>
+    <script>
+    (function() {
+        const slidesContainer = document.querySelector('.slides');
+        const images = Array.from(document.querySelectorAll('.slide-image'));
+        const prevBtn = document.querySelector('.control.prev');
+        const nextBtn = document.querySelector('.control.next');
+        const dotsContainer = document.querySelector('.dots');
+
+        if (!slidesContainer || images.length === 0) return;
+
+        let currentIndex = 0;
+
+        function goTo(index) {
+            currentIndex = (index + images.length) % images.length;
+            slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+            updateDots();
+        }
+
+        function createDots() {
+            dotsContainer.innerHTML = '';
+            images.forEach((_, idx) => {
+                const b = document.createElement('button');
+                b.setAttribute('aria-label', `Go to slide ${idx + 1}`);
+                b.addEventListener('click', () => goTo(idx));
+                dotsContainer.appendChild(b);
+            });
+        }
+
+        function updateDots() {
+            const all = Array.from(dotsContainer.children);
+            all.forEach((d, idx) => {
+                if (idx === currentIndex) d.setAttribute('aria-selected', 'true');
+                else d.removeAttribute('aria-selected');
+            });
+        }
+
+        prevBtn && prevBtn.addEventListener('click', () => goTo(currentIndex - 1));
+        nextBtn && nextBtn.addEventListener('click', () => goTo(currentIndex + 1));
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') goTo(currentIndex - 1);
+            if (e.key === 'ArrowRight') goTo(currentIndex + 1);
+        });
+
+        // Swipe support
+        let startX = 0;
+        let isDown = false;
+        slidesContainer.addEventListener('pointerdown', (e) => { isDown = true; startX = e.clientX; });
+        slidesContainer.addEventListener('pointerup', (e) => {
+            if (!isDown) return;
+            const delta = e.clientX - startX;
+            if (Math.abs(delta) > 40) {
+                if (delta < 0) goTo(currentIndex + 1); else goTo(currentIndex - 1);
+            }
+            isDown = false;
+        });
+        slidesContainer.addEventListener('pointerleave', () => { isDown = false; });
+
+        // Auto-play
+        let autoplayId = setInterval(() => goTo(currentIndex + 1), 5000);
+        document.querySelector('.slider').addEventListener('mouseenter', () => clearInterval(autoplayId));
+        document.querySelector('.slider').addEventListener('mouseleave', () => {
+            autoplayId = setInterval(() => goTo(currentIndex + 1), 5000);
+        });
+
+        createDots();
+        goTo(0);
+    })();
+    </script>
+</body>
+</html>
