@@ -23,7 +23,7 @@ Dive into the world of automotive excellence with images of:
 
 ## 🚀 Live Demo
 
-Experience the slider in action: [https://itsiamdev.github.io/Leading-Car/](https://itsiamddev.github.io/Leading-Car/)
+Experience the slider in action: [https://itsiamdev.github.io/Leading-Car/](https://itsiamdev.github.io/Leading-Car/)
 
 ## 🛠️ Technologies Used
 
